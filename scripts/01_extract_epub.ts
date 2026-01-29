@@ -86,7 +86,7 @@ function buildTurndown(): TurndownService {
     bulletListMarker: '-',
   });
 
-  // Drop scripts/styles and common nav/footnote clutter by stripping their contents first.
+  // Drop scripts/styles.
   td.remove(['script', 'style']);
 
   // Prefer turning <br> into newlines.
@@ -106,6 +106,12 @@ function buildTurndown(): TurndownService {
     },
   });
 
+  // Remove link targets (keep anchor text) to avoid noisy internal /links/... paths.
+  td.addRule('stripLinks', {
+    filter: (node: any) => node.nodeName === 'A',
+    replacement: (content: string) => content,
+  });
+
   return td;
 }
 
@@ -117,7 +123,9 @@ async function main() {
     .argument('<epubPath>', 'Path to input .epub')
     .option('-o, --out <dir>', 'Output directory', 'output')
     .option('--bookSlug <slug>', 'Override output folder name (default: derived from title/file)')
-    .option('--maxChapters <n>', 'Safety limit for number of spine items to extract', (v) => parseInt(v, 10))
+    .option('--maxChapters <n>', 'Safety limit for number of spine items to extract', (v) =>
+      parseInt(v, 10),
+    )
     .parse(process.argv);
 
   const epubPathArg = program.args[0];
@@ -135,8 +143,9 @@ async function main() {
     throw new Error(`EPUB not found: ${epubPath}`);
   }
 
-  const EPubAny: any = EPub;
-  const epub = new EPubAny(epubPath);
+  // epub2's CJS export is an object with an EPub class.
+  const EPubCtor: any = (EPub as any).EPub ?? EPub;
+  const epub = new EPubCtor(epubPath);
   await epubParse(epub);
 
   const title: string | undefined = epub?.metadata?.title;
@@ -189,7 +198,10 @@ async function main() {
 
     const rawHtml = await getChapterHtml(epub, id);
     const mdRaw = turndown.turndown(rawHtml);
-    const md = stripMarkdownFrontMatter(mdRaw).trim();
+    const md = stripMarkdownFrontMatter(mdRaw)
+      // collapse excessive blank lines
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
 
     // Best-effort title: TOC title matching href/id, else spine entry title, else fallback.
     const tocMatch = (epub.toc ?? []).find((t: any) => t.id === id || t.href === spineEntry?.href);
