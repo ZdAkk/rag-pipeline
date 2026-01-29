@@ -39,13 +39,17 @@ This creates:
 npm run extract:epub -- ./data/example.epub --out output
 ```
 
-## 2) Chunk Markdown (placeholder)
+## 2) Chunk Markdown
 
 ```bash
 npm run chunk -- --in output/<bookSlug>
 ```
 
-Writes a placeholder file at `output/<bookSlug>/chunks/chunks.jsonl`.
+Writes JSONL chunks at `output/<bookSlug>/chunks/chunks.jsonl`.
+
+Defaults (tunable via CLI flags):
+- `--maxTokens 450` (currently approximated as **words**)
+- `--overlapTokens 80` (currently approximated as **words**)
 
 ## 3) Embed chunks (placeholder)
 

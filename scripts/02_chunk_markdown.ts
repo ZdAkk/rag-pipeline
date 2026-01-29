@@ -166,9 +166,18 @@ async function main() {
     .description('Chunk Markdown chapters into smaller passages (JSONL)')
     .option('-i, --in <dir>', 'Book directory (e.g., output/my-book)', '')
     .option('-o, --out <dir>', 'Output dir (defaults to <in>/chunks)', '')
-    .option('--maxTokens <n>', 'Approx token budget per chunk', (v) => parseInt(v, 10), 800)
-    .option('--overlapTokens <n>', 'Approx tokens of overlap between adjacent chunks', (v) =>
-      parseInt(v, 10), 120)
+    .option(
+      '--maxTokens <n>',
+      'Approx token budget per chunk (currently approximated as words)',
+      (v) => parseInt(v, 10),
+      450,
+    )
+    .option(
+      '--overlapTokens <n>',
+      'Approx tokens of overlap between adjacent chunks (currently approximated as words)',
+      (v) => parseInt(v, 10),
+      80,
+    )
     .option(
       '--includeChapterHeader',
       'Include `# <chapter title>` as the first paragraph in chunk text',
