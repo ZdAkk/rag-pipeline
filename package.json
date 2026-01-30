@@ -11,6 +11,7 @@
   "scripts": {
     "extract:epub": "tsx scripts/01_extract_epub.ts",
     "chunk": "tsx scripts/02_chunk_markdown.ts",
+    "ingest:pg": "tsx scripts/04_ingest_pg.ts",
     "embed": "tsx scripts/03_embed_chunks.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
@@ -18,14 +19,17 @@
   },
   "dependencies": {
     "commander": "^12.1.0",
+    "dotenv": "^17.2.3",
     "epub2": "^3.0.1",
     "fs-extra": "^11.2.0",
+    "pg": "^8.17.2",
     "slugify": "^1.6.6",
     "turndown": "^7.1.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.10.2",
+    "@types/pg": "^8.16.0",
     "@types/turndown": "^5.0.6",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
